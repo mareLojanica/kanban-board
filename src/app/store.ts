@@ -1,13 +1,22 @@
 import { configureStore } from "@reduxjs/toolkit"
-import rootReducer from "./rootReducer"
+import { graphqlApiAuth } from "../api/auth.qraphql"
+import { ticketsApi } from "../api/tickets.grapql"
+import authReducer from "../features/auth/authSlice"
+import ticketsReducer from "../features/kanban/ticketSlice"
 
-const store = configureStore({
-	reducer: rootReducer,
-	devTools: import.meta.env.VITE_ENVIRONMENT !== "production",
+export const store = configureStore({
+	reducer: {
+		[graphqlApiAuth.reducerPath]: graphqlApiAuth.reducer,
+		[ticketsApi.reducerPath]: ticketsApi.reducer,
+		tickets: ticketsReducer,
+		auth: authReducer,
+	},
+	devTools: true,
+	middleware: (getDefaultMiddleware) =>
+		getDefaultMiddleware()
+			.concat(graphqlApiAuth.middleware)
+			.concat(ticketsApi.middleware),
 })
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
-
-export default store

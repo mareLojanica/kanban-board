@@ -1,9 +1,8 @@
-// src/app/rootReducer.ts
 import { combineReducers } from "@reduxjs/toolkit"
-import counterReducer from "../features/counter/counterSlice"
+import { graphqlApi } from "../features/users/userSlice"
 
 const rootReducer = combineReducers({
-	counter: counterReducer,
+	[graphqlApi.reducerPath]: graphqlApi.reducer,
 })
 
 export default rootReducer
