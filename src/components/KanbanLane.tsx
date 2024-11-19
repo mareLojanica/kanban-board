@@ -1,41 +1,40 @@
-import { useDroppable } from "@dnd-kit/core"
-import { Box, Typography, IconButton } from "@mui/material"
-import KanbanCard from "./KanbanCard"
+import { FC, useCallback } from "react"
+import { Box, IconButton, Typography } from "@mui/material"
 import AddIcon from "@mui/icons-material/Add"
-import { TicketStatus } from "../types/VerticalKanbanBoard.types"
-import { useCreateTicketMutation } from "../api/tickets.grapql"
 import { useDispatch } from "react-redux"
+import { useDroppable } from "@dnd-kit/core"
+
+import { useCreateTicketMutation } from "../api/tickets.grapql"
 import { addNewTicket } from "../features/kanban/ticketSlice"
+import KanbanCard from "./KanbanCard"
 
-interface ColumnConfig {
-	alias: TicketStatus
-	headerColor: string
-	backgroundColor: string
-	cardColor: string
-}
+import {
+	KanbanLaneProps,
+	TicketStatus,
+} from "../types/VerticalKanbanBoard.types"
 
-interface KanbanLaneProps {
-	column: ColumnConfig
-	items: { title: string; id: string }[]
-}
-
-export function KanbanLane({ column, items }: KanbanLaneProps) {
+const KanbanLane: FC<KanbanLaneProps> = ({ column, items }) => {
 	const { setNodeRef } = useDroppable({
 		id: column.alias,
 	})
 	const dispatch = useDispatch()
 	const [createTicket] = useCreateTicketMutation()
 
-	const handleCreateTicket = async () => {
-		const statusValue =
-			TicketStatus[column.alias as unknown as keyof typeof TicketStatus]
-		console.log(column.alias)
-		const newTicket = await createTicket({
-			title: "Double Click To Edit",
-			status: statusValue,
-		}).unwrap()
-		dispatch(addNewTicket(newTicket.createTicket))
-	}
+	const handleCreateTicket = useCallback(async () => {
+		try {
+			const statusValue =
+				TicketStatus[
+					column.alias as unknown as keyof typeof TicketStatus
+				]
+
+			const newTicket = await createTicket({
+				title: "Double Click To Edit",
+				status: statusValue,
+			}).unwrap()
+
+			dispatch(addNewTicket({ ...newTicket.createTicket, isNew: true }))
+		} catch (error) {}
+	}, [column.alias, dispatch, addNewTicket])
 
 	return (
 		<Box
@@ -44,18 +43,20 @@ export function KanbanLane({ column, items }: KanbanLaneProps) {
 				display: "flex",
 				flexDirection: "column",
 				height: "100%",
-				borderRadius: "12px",
+				width: "100%",
 			}}
 		>
 			<Box
 				sx={{
 					background: column.headerColor,
 					color: "#ffffff",
-					padding: 2,
+					padding: {
+						xs: 1,
+						md: 2,
+					},
 					display: "flex",
 					justifyContent: "center",
 					alignItems: "center",
-					borderRadius: "12px",
 					width: "100%",
 				}}
 			>
@@ -65,24 +66,35 @@ export function KanbanLane({ column, items }: KanbanLaneProps) {
 						margin: "auto",
 						flexDirection: "column",
 						alignItems: "center",
+						justifyContent: "center",
+						height: "90px",
 					}}
 				>
 					<Typography
 						variant="h6"
 						fontWeight="bold"
-						sx={{ marginBottom: 1 }}
+						sx={{
+							fontSize: {
+								xs: 16,
+								md: 24,
+							},
+						}}
 					>
-						{column.alias}
+						{column.title}
 					</Typography>
-					<Typography
-						variant="subtitle2"
-						fontWeight="bold"
-						sx={{ marginBottom: 1 }}
-					>
+					<Typography variant="subtitle2" fontWeight="bold">
 						{`(${items.length})`}
 					</Typography>
 				</Box>
-				<Box sx={{ color: "#ffffff" }}>
+				<Box
+					sx={{
+						color: "#ffffff",
+						height: "100%",
+						display: "flex",
+						flexDirection: "column",
+						justifyContent: "center",
+					}}
+				>
 					<IconButton color={"inherit"} onClick={handleCreateTicket}>
 						<AddIcon color={"inherit"} />
 					</IconButton>
@@ -93,24 +105,30 @@ export function KanbanLane({ column, items }: KanbanLaneProps) {
 				ref={setNodeRef}
 				sx={{
 					background: column.backgroundColor,
-					borderRadius: 2,
 					flex: 1,
-					padding: 2,
+					px: {
+						xs: 2,
+						md: 14,
+					},
+					py: 4,
 					display: "flex",
 					gap: 1,
 					flexDirection: "column",
 				}}
 			>
-				{items.map(({ title: cardTitle, id }, key) => (
+				{items.map(({ title: cardTitle, id, isNew }, key) => (
 					<KanbanCard
 						id={id}
 						title={cardTitle}
 						key={key}
 						index={key}
 						parent={column.alias}
+						isNew={!!isNew}
+						cardColor={column.cardColor}
 					/>
 				))}
 			</Box>
 		</Box>
 	)
 }
+export default KanbanLane

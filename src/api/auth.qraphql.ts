@@ -1,18 +1,12 @@
 import { createApi } from "@reduxjs/toolkit/query/react"
-import { gql } from "@apollo/client"
+
 import client from "./Apollo.Client"
 import { DocumentNode } from "graphql"
+import { LOGIN } from "./queries/auth.queris"
 
 type GraphQLMutationBody = {
 	mutation: DocumentNode
 }
-const LOGIN = gql`
-	mutation {
-		login {
-			accessToken
-		}
-	}
-`
 
 export const graphqlApiAuth = createApi({
 	reducerPath: "graphqlApiAuth",

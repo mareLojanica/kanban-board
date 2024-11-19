@@ -20,7 +20,7 @@ import {
 	useTheme,
 } from "@mui/material"
 import { columnsConfig } from "../../config/kanbanConfig"
-import { KanbanLane } from "../../components/KanbanLane"
+
 import { useDispatch, useSelector } from "react-redux"
 import { setSearchText, setTickets } from "./ticketSlice"
 import { RootState } from "../../app/store"
@@ -29,6 +29,7 @@ import { getEnumValueByKey } from "../../utils"
 import { selectSearchText } from "./ticketSelectors"
 import { useCallback, useState } from "react"
 import { CustomPointerSensor } from "../../utils/CustomPointerSensor"
+import KanbanLane from "../../components/KanbanLane"
 
 const StyledInput = styled(Input)<InputProps>(({ theme }) => ({
 	borderRadius: "8px",
@@ -107,6 +108,7 @@ const VerticalKanban = () => {
 			}).unwrap()
 		}
 	}
+
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value
 		dispatch(setSearchText(value))
@@ -149,17 +151,18 @@ const VerticalKanban = () => {
 					sx={{
 						display: "flex",
 						flexDirection: "row",
-						width: "100%",
 						gap: "16px",
 						height: "100%",
 						padding: 2,
+						overflow: "auto",
 					}}
 				>
 					{columnsConfig.map((column) => (
 						<Box
 							key={column.alias}
 							sx={{
-								width: isMobileOrTablet ? "100%" : "33%",
+								width: isMobileOrTablet ? "250px" : "33%",
+								minWidth: "250px",
 							}}
 						>
 							<KanbanLane

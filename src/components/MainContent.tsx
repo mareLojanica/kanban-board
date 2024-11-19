@@ -1,5 +1,5 @@
-import { Box, styled } from "@mui/material"
 import { FC, PropsWithChildren } from "react"
+import { Box, styled } from "@mui/material"
 
 const MainContentWrapper = styled(Box)(() => {
 	return {

@@ -1,5 +1,5 @@
-import { Box, CircularProgress } from "@mui/material"
 import { FC } from "react"
+import { Box, CircularProgress } from "@mui/material"
 
 const Spinner: FC = (): JSX.Element => {
 	return (

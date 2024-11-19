@@ -1,16 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { ticketsApi } from "../../api/tickets.grapql"
-
-interface TicketsState {
-	tickets: Array<{
-		id: string
-		status: string
-		title: string
-	}>
-	isLoading: boolean
-	isError: boolean
-	searchText: string
-}
+import { Ticket, TicketsState } from "../../types/Tickets.types"
 
 const initialState: TicketsState = {
 	isLoading: false,
@@ -43,14 +33,7 @@ const ticketsSlice = createSlice({
 				(ticket) => ticket.id !== action.payload
 			)
 		},
-		addNewTicket(
-			state,
-			action: PayloadAction<{
-				id: string
-				status: string
-				title: string
-			}>
-		) {
+		addNewTicket(state, action: PayloadAction<Ticket>) {
 			state.tickets = [...state.tickets, action.payload]
 		},
 		updateTicketById(

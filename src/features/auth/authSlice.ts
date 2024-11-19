@@ -1,11 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { graphqlApiAuth } from "../../api/auth.qraphql"
-
-interface AuthState {
-	accessToken: string | null
-	isLoading: boolean
-	error: string | null
-}
+import { AuthState } from "../../types/Auth.types"
 
 const initialState: AuthState = {
 	accessToken: null,

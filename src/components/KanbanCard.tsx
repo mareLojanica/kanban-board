@@ -1,54 +1,42 @@
-import { useState } from "react"
-import { useDraggable } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
-import { Box, Typography, IconButton, TextField } from "@mui/material"
+import { useDraggable } from "@dnd-kit/core"
+import { useDispatch } from "react-redux"
+import { useCallback, useState } from "react"
+import {
+	Box,
+	IconButton,
+	TextField,
+	Typography,
+	useMediaQuery,
+	useTheme,
+} from "@mui/material"
 import CloseIcon from "@mui/icons-material/Close"
+
 import {
 	useDeleteTicketMutation,
 	useUpdateTicketMutation,
 } from "../api/tickets.grapql"
-import { useDispatch } from "react-redux"
 import {
 	deleteSelectedTicket,
 	updateTicketById,
 } from "../features/kanban/ticketSlice"
+import { KanbanCardProps } from "../types/VerticalKanbanBoard.types"
 
 const KanbanCard = ({
 	id,
 	title,
 	index,
 	parent,
-}: {
-	id: string
-	title: string
-	index: number
-	parent: string
-}) => {
+	isNew = false,
+	cardColor,
+}: KanbanCardProps) => {
 	const dispatch = useDispatch()
 	const [deleteTicket] = useDeleteTicketMutation()
 	const [updateTicket] = useUpdateTicketMutation()
-	const [isEditing, setIsEditing] = useState(false)
-	const [editedTitle, setEditedTitle] = useState(title)
-
-	const onDelete = async () => {
-		try {
-			await deleteTicket({ id }).unwrap()
-			dispatch(deleteSelectedTicket(id))
-		} catch (error) {
-			console.error("Error deleting ticket:", error)
-		}
-	}
-
-	const handleTitleEdit = async () => {
-		setIsEditing(false)
-		const dataToUpdate = {
-			id,
-			title: editedTitle,
-		}
-		await updateTicket(dataToUpdate).unwrap()
-		dispatch(updateTicketById(dataToUpdate))
-	}
-
+	const [isEditing, setIsEditing] = useState(isNew)
+	const [editedTitle, setEditedTitle] = useState(isNew ? "" : title)
+	const theme = useTheme()
+	const isMobileOrTablet = useMediaQuery(theme.breakpoints.down("md"))
 	const { attributes, listeners, setNodeRef, transform, isDragging } =
 		useDraggable({
 			id,
@@ -60,6 +48,25 @@ const KanbanCard = ({
 			},
 		})
 
+	const onDelete = useCallback(async () => {
+		try {
+			await deleteTicket({ id }).unwrap()
+			dispatch(deleteSelectedTicket(id))
+		} catch (error) {
+			console.error("Error deleting ticket:", error)
+		}
+	}, [deleteTicket, dispatch, deleteSelectedTicket, id])
+
+	const handleTitleEdit = useCallback(async () => {
+		setIsEditing(false)
+		const dataToUpdate = {
+			id,
+			title: editedTitle,
+		}
+		await updateTicket(dataToUpdate).unwrap()
+		dispatch(updateTicketById(dataToUpdate))
+	}, [setIsEditing, updateTicket, dispatch, updateTicketById])
+
 	return (
 		<Box
 			ref={setNodeRef}
@@ -70,20 +77,20 @@ const KanbanCard = ({
 				alignItems: "center",
 				justifyContent: "space-between",
 				padding: 2,
-				backgroundColor: "white",
+				backgroundColor: cardColor,
 				marginBottom: 2,
-				borderRadius: 2,
-				border: "2px solid",
-				borderColor: isDragging ? "blue" : "grey.500",
-				boxShadow: "0px 0px 5px 2px #2121213b",
 				transform: CSS.Translate.toString(transform),
 				opacity: isDragging ? 0.5 : 1,
 				cursor: "grab",
 				zIndex: 100,
+				height: "80px",
+				boxShadow: isMobileOrTablet
+					? "0px 0px 8px 4px rgba(0, 0, 0, 0.2)"
+					: "none",
 				"&:hover": {
-					boxShadow: "0px 0px 8px 4px rgba(0, 0, 0, 0.2)",
 					"& .iconButton": {
-						opacity: 1,
+						display: "block",
+						pointerEvents: "all",
 						transform: "scale(1.1)",
 					},
 				},
@@ -99,34 +106,48 @@ const KanbanCard = ({
 						if (e.key === "Enter") handleTitleEdit()
 						if (e.key === "Escape") setIsEditing(false)
 					}}
+					inputProps={{ id: "edit-input-id" }}
 					autoFocus
-					sx={{ flexGrow: 1, marginRight: 2 }}
+					variant="standard"
+					sx={{
+						flexGrow: 1,
+						marginRight: 2,
+						border: "none",
+						width: "80%",
+						input: {
+							color: "#ffffff",
+							width: "inherit",
+						},
+					}}
 				/>
 			) : (
-				<Typography variant="body1" sx={{ cursor: "text" }}>
+				<Typography
+					variant="body1"
+					sx={{ cursor: "text" }}
+					color="#ffffff"
+				>
 					{title}
 				</Typography>
 			)}
-			<IconButton
-				onClick={(e) => {
-					e.stopPropagation()
-					e.preventDefault()
-					onDelete()
-				}}
-				className="iconButton"
-				sx={{
-					pointerEvents: "all",
-					backgroundColor: "white",
-					p: 2,
-					opacity: 0,
-					"&:hover": {
-						backgroundColor: "grey.200",
-						opacity: 1,
-					},
-				}}
-			>
-				<CloseIcon fontSize="small" />
-			</IconButton>
+
+			<Box>
+				<IconButton
+					onClick={(e) => {
+						e.stopPropagation()
+						e.preventDefault()
+						onDelete()
+					}}
+					className="iconButton"
+					sx={{
+						p: 2,
+						display: isMobileOrTablet ? "block" : "none",
+						pointerEvents: isMobileOrTablet ? "all" : "none",
+						color: "#ffffff",
+					}}
+				>
+					<CloseIcon fontSize="small" color="inherit" />
+				</IconButton>
+			</Box>
 		</Box>
 	)
 }

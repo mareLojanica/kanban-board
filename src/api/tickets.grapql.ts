@@ -1,79 +1,22 @@
 import { createApi, BaseQueryFn } from "@reduxjs/toolkit/query/react"
-import { gql, ApolloError, MutationOptions, QueryOptions } from "@apollo/client"
+import { ApolloError } from "@apollo/client"
 import client from "./Apollo.Client"
 import { RootState } from "../app/store"
 import { TicketStatus } from "../types/VerticalKanbanBoard.types"
-
-export const GET_TICKETS = gql`
-	query GetTickets($searchTicketsInput: SearchTicketsInput) {
-		getTickets(searchTicketsInput: $searchTicketsInput) {
-			id
-			status
-			title
-		}
-	}
-`
-
-export const UPDATE_TICKET = gql`
-	mutation UpdateTicket($updateTicketInput: UpdateTicketInput!) {
-		updateTicket(updateTicketInput: $updateTicketInput) {
-			id
-			status
-			title
-		}
-	}
-`
-
-const DELETE_TICKET = gql`
-	mutation DeleteTicket($id: String!) {
-		deleteTicket(id: $id) {
-			success
-		}
-	}
-`
-const CREATE_TICKET = gql`
-	mutation CreateTicket($createTicketInput: CreateTicketInput!) {
-		createTicket(createTicketInput: $createTicketInput) {
-			id
-			status
-			title
-		}
-	}
-`
-export type Ticket = Omit<TicketResponse, "__typename">
-export type TicketResponse = {
-	id: string
-	title: string
-	status: TicketStatus
-	__typename: string
-}
-export type GetTicketsResponse = {
-	getTickets: TicketResponse[]
-}
-
-export type UpdateTicketResponse = {
-	updateTicket: Omit<TicketResponse, "__typename">
-}
-
-export type DeleteTicketResponse = {
-	deleteTicket: {
-		success: boolean
-	}
-}
-
-export type CreateTicketResponse = {
-	createTicket: Ticket
-}
-
-type BaseQueryArgs = {
-	body:
-		| MutationOptions<
-				MutationOptions,
-				Record<string, any>,
-				{ headers: { Authorization: string } }
-		  >
-		| QueryOptions<any, Record<string, any>>
-}
+import { Ticket } from "../types/Tickets.types"
+import {
+	CREATE_TICKET,
+	DELETE_TICKET,
+	GET_TICKETS,
+	UPDATE_TICKET,
+} from "./queries/ticket.queries"
+import {
+	BaseQueryArgs,
+	CreateTicketResponse,
+	DeleteTicketResponse,
+	GetTicketsResponse,
+	UpdateTicketResponse,
+} from "../types/api.reposne"
 
 const baseQuery: BaseQueryFn<BaseQueryArgs, unknown, ApolloError> = async (
 	args,
