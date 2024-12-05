@@ -45,6 +45,7 @@ const KanbanLane: FC<KanbanLaneProps> = ({ column, items }) => {
 				height: "100%",
 				width: "100%",
 			}}
+			data-testid={`kanban-lane-${column.alias}`}
 		>
 			<Box
 				sx={{
@@ -95,7 +96,11 @@ const KanbanLane: FC<KanbanLaneProps> = ({ column, items }) => {
 						justifyContent: "center",
 					}}
 				>
-					<IconButton color={"inherit"} onClick={handleCreateTicket}>
+					<IconButton
+						color={"inherit"}
+						onClick={handleCreateTicket}
+						data-testid={`add-card-${column.alias}`}
+					>
 						<AddIcon color={"inherit"} />
 					</IconButton>
 				</Box>
@@ -106,10 +111,7 @@ const KanbanLane: FC<KanbanLaneProps> = ({ column, items }) => {
 				sx={{
 					background: column.backgroundColor,
 					flex: 1,
-					px: {
-						xs: 2,
-						md: 14,
-					},
+					px: 2,
 					py: 4,
 					display: "flex",
 					gap: 1,

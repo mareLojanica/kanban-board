@@ -62,6 +62,7 @@ const VerticalKanban = () => {
 			tolerance: 5,
 		},
 	})
+
 	const sensors = useSensors(pointerSensor)
 	const dispatch = useDispatch()
 	const data = useSelector((state: RootState) => state.tickets.tickets)
@@ -100,6 +101,7 @@ const VerticalKanban = () => {
 					return { ...ticket }
 				}
 			})
+
 			dispatch(setTickets(updatedTickets ?? []))
 			const statusKey = getEnumValueByKey(TicketStatus, String(draggedTo))
 			updateTicket({
@@ -140,7 +142,7 @@ const VerticalKanban = () => {
 						sx={{
 							width: {
 								xs: "100%",
-								md: "30%",
+								md: "50%",
 							},
 						}}
 						value={searchText}
@@ -168,7 +170,7 @@ const VerticalKanban = () => {
 							<KanbanLane
 								column={column}
 								items={
-									data?.filter(
+									data.filter(
 										(card) => card.status === column.alias
 									) ?? []
 								}

@@ -4,6 +4,7 @@ import { Box, CircularProgress } from "@mui/material"
 const Spinner: FC = (): JSX.Element => {
 	return (
 		<Box
+			data-testid="spinner"
 			sx={{
 				width: "100%",
 				height: "100%",

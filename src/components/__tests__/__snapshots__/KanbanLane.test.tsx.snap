@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`KanbanLane Component renders the KanbanLane correctly 1`] = `
+<div>
+  <div
+    class="MuiBox-root css-11mey90"
+    data-testid="kanban-lane-TO_DO"
+  >
+    <div
+      class="MuiBox-root css-1vui9rc"
+    >
+      <div
+        class="MuiBox-root css-1lf773q"
+      >
+        <h6
+          class="MuiTypography-root MuiTypography-h6 css-155446w-MuiTypography-root"
+        >
+          To Do
+        </h6>
+        <h6
+          class="MuiTypography-root MuiTypography-subtitle2 css-10un0gn-MuiTypography-root"
+        >
+          (2)
+        </h6>
+      </div>
+      <div
+        class="MuiBox-root css-g81iaw"
+      >
+        <button
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-sizeMedium css-cdtzx3-MuiButtonBase-root-MuiIconButton-root"
+          data-testid="add-card-TO_DO"
+          tabindex="0"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+            data-testid="AddIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div
+      class="MuiBox-root css-79iqgk"
+    >
+      <div
+        data-testid="kanban-card"
+      />
+      <div
+        data-testid="kanban-card"
+      />
+    </div>
+  </div>
+</div>
+`;
